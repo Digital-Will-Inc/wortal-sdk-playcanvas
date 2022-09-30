@@ -7,7 +7,7 @@
 2. Set `GAME_NAME` in `wortal.js` to the game’s name
 3. Set [Loading Type](https://developer.playcanvas.com/en/user-manual/scripting/loading-order/) to [After Engine](https://developer.playcanvas.com/en/user-manual/scripting/application-lifecyle/) for `wortal.js`
 
-![Loading Type Settings](/docs/img/loading-type.png)
+![Loading Type Settings](/docs/img/playcanvas-loading-type.png)
 
 4. Call for ads in the game code
     1. Demo scripts included in the [Wortal SDK demo project](https://playcanvas.com/project/984829)
