@@ -1,17 +1,7 @@
 /**
- * Helper script for integrating the Wortal SDK into games. Handles initialization for various platforms, and
- * adds an analytics API.
- *
- * Requires the index.html of the game to include the following div in the body:
- *
- * <pre>
- * <div class="loading-cover" id="loading-cover" style="background: #000; width: 100%; height: 100%; position: fixed; z-index: 100;"></div>
- * </pre>
- *
- *  This is necessary to hide the game rendering while pre-roll ads are shown on certain platforms.
- *  You should not show the game canvas or play any audio until <code>hasPlayedPreroll == true</code>.
- *
- * @version 1.3.1
+ * Wortal SDK for PlayCanvas.
+ * Handles initialization for various platforms, and add an analytics API.
+ * @version 1.0.2
  */
 
 const GAME_NAME = "PlayCanvasGame";
@@ -45,8 +35,9 @@ const Placement = {
 const onInitWortal = new Event('WortalLoaded');
 
 let isWortalInit = false;
-let hasPlayedPreroll = false;
+let isAdBlocked = false;
 
+let hasPlayedPreroll = false;
 let linkInterstitialId = "";
 let linkRewardedId = "";
 
@@ -55,56 +46,58 @@ let levelTimer = 0;
 let levelTimerHandle;
 let levelName = "";
 
-initWortalSdk();
+_initWortalSdk();
 
-function initWortalSdk() {
+function _initWortalSdk() {
     if (isWortalInit) return;
     window.addEventListener('load', () => {
         window.initWortal(function () {
-            console.log('[Wortal] Setup complete.');
+            console.log('[Wortal] Initializing..');
             const platform = window.getWortalPlatform();
             console.log('[Wortal] Platform: ' + platform);
             isWortalInit = true;
             if (platform === 'wortal') {
                 showInterstitial(Placement.PREROLL, 'Preroll', {
-                    adBreakDone: function () {
+                    afterAd: function () {
                         if (hasPlayedPreroll) return;
-                        removeLoadingCover();
-                        window.dispatchEvent(onInitWortal);
-                        hasPlayedPreroll = true;
-                    },
-                    noShow: function () {
-                        if (hasPlayedPreroll) return;
-                        removeLoadingCover();
+                        _removeLoadingCover();
                         window.dispatchEvent(onInitWortal);
                         hasPlayedPreroll = true;
                     }
                 });
             } else if (platform === 'link') {
-                removeLoadingCover();
-                window.wortalGame.initializeAsync().then(() => {
-                    window.wortalGame.startGameAsync();
-                    getLinkAdUnitIds();
-                    hasPlayedPreroll = true;
-                });
+                _removeLoadingCover();
+                if (window.wortalGame) {
+                    window.wortalGame.initializeAsync().then(() => {
+                        window.wortalGame.startGameAsync();
+                        _getLinkAdUnitIds();
+                        hasPlayedPreroll = true;
+                    });
+                }
             } else if (platform === 'viber') {
-                removeLoadingCover();
-                window.wortalGame.initializeAsync().then(() => {
-                    window.wortalGame.startGameAsync();
-                    hasPlayedPreroll = true;
-                });
+                _removeLoadingCover();
+                if (window.wortalGame) {
+                    window.wortalGame.initializeAsync().then(() => {
+                        window.wortalGame.startGameAsync();
+                        hasPlayedPreroll = true;
+                    });
+                }
             }
+        }, function () {
+            console.log("[Wortal] Ad blocker detected.");
+            _removeLoadingCover();
+            isAdBlocked = true;
         });
 
         window.addEventListener('visibilitychange', () => {
             if (document.visibilityState === "hidden") {
-                logGameEnd();
+                _logGameEnd();
             }
         });
 
-        getIntlData()
-            .then(response => logGameStart(response))
-            .catch(() => logGameStart("Nulltherlands"));
+        _getIntlData()
+            .then(response => _logGameStart(response))
+            .catch(() => _logGameStart("Nulltherlands"));
 
         console.log("[Wortal] Initialized");
     });
@@ -115,35 +108,40 @@ function initWortalSdk() {
  * @example
  * showInterstitial(Placement.NEXT, 'NextLevel', {
  *    beforeAd: function () {
- *        // Triggered before ad shows, pause the game and audio here.
  *        pauseGame();
  *     },
  *     afterAd: function () {
- *        // Triggered after ad is finished. Resume the game here.
  *        resumeGame();
  *     },
  * });
  *
  * @param {Placement} placement Type of ad placement.
  * @param {string} description Description of the ad placement. Ex: "NextLevel"
- * @param {object} callbacks Object for callbacks.
+ * @param {object} callbacks Object for callbacks. See the example above for definition.
  */
 function showInterstitial(placement, description, callbacks) {
     if (isWortalInit === false) return;
     if (placement === Placement.REWARD) return;
     if (placement === Placement.PREROLL && hasPlayedPreroll) return;
+    if (isAdBlocked) {
+        callbacks.afterAd();
+        return;
+    }
 
     const params = {};
     if (callbacks.beforeAd) {
         params.beforeAd = callbacks.beforeAd;
     }
+    // We should always receive only one of the following callbacks: afterAd, noShow or noBreak.
+    // They all signal that the ad event is complete and that we should resume the game now.
     if (callbacks.afterAd) {
         params.afterAd = callbacks.afterAd;
         params.noShow = callbacks.afterAd;
         params.noBreak = callbacks.afterAd;
     }
-    if (callbacks.adBreakDone) {
-        params.adBreakDone = callbacks.adBreakDone;
+    // Preroll ads only return adBreakDone and/or noShow.
+    if (placement === Placement.PREROLL) {
+        params.adBreakDone = callbacks.afterAd;
     }
 
     window.triggerWortalAd(placement, linkInterstitialId, description, params);
@@ -154,37 +152,39 @@ function showInterstitial(placement, description, callbacks) {
  * @example
  * showRewarded('ReviveAndContinue', {
  *     beforeAd: function () {
- *        // Triggered before ad shows, pause the game and audio here.
  *        pauseGame();
  *     },
  *     afterAd: function () {
- *        // Triggered after ad is finished. Resume the game here.
  *        resumeGame();
  *     },
  *     adDismissed: function () {
- *        // Triggered when the player skipped the ad. Do not reward the player.
  *        gameOver();
  *     },
  *     adViewed: function () {
- *        // Triggered after player has watched the ad. Reward the player here.
  *        reviveAndContinue();
  *     },
  * });
  *
  * @param {string} description Description of the ad placement. Ex: "NextLevel"
- * @param {object} callbacks Object for callbacks.
+ * @param {object} callbacks Object for callbacks. See the example above for definition.
  */
 function showRewarded(description, callbacks) {
     if (isWortalInit === false) return;
+    if (isAdBlocked) {
+        callbacks.afterAd();
+        return;
+    }
 
     const params = {};
     if (callbacks.beforeAd) {
         params.beforeAd = callbacks.beforeAd;
     }
+    // We should always receive only one of the following callbacks: afterAd, noShow or noBreak.
+    // They all signal that the ad event is complete and that we should resume the game now.
     if (callbacks.afterAd) {
         params.afterAd = callbacks.afterAd;
-        params.noShow = callbacks.noShow;
-        params.noBreak = callbacks.noShow;
+        params.noShow = callbacks.afterAd;
+        params.noBreak = callbacks.afterAd;
     }
     if (callbacks.adDismissed) {
         params.adDismissed = callbacks.adDismissed;
@@ -192,12 +192,8 @@ function showRewarded(description, callbacks) {
     if (callbacks.adViewed) {
         params.adViewed = callbacks.adViewed;
     }
-    if (callbacks.beforeReward) {
-        params.beforeReward = callbacks.beforeReward;
-    }
-    if (callbacks.adBreakDone) {
-        params.adBreakDone = callbacks.adBreakDone;
-    }
+    // This is only called on AdSense, we need to call showAdFn() here to trigger the ad to show.
+    params.beforeReward = function (showAdFn) { showAdFn() };
 
     window.triggerWortalAd(Placement.REWARD, linkRewardedId, description, params);
 }
@@ -232,7 +228,7 @@ function logLevelStart(level) {
     levelName = level;
     levelTimer = 0;
     levelTimerHandle = setInterval(() => levelTimer += 1, 1000);
-    logEvent("LevelStart", {
+    _logEvent("LevelStart", {
         game: GAME_NAME,
         level: level,
     });
@@ -253,7 +249,7 @@ function logLevelEnd(level, score = '0', wasCompleted = true) {
     if (levelName !== level) {
         levelTimer = 0;
     }
-    logEvent("LevelEnd", {
+    _logEvent("LevelEnd", {
         game: GAME_NAME,
         level: level,
         time: levelTimer,
@@ -268,7 +264,7 @@ function logLevelEnd(level, score = '0', wasCompleted = true) {
  * @param level {string} Level the player achieved.
  */
 function logLevelUp(level) {
-    logEvent("LevelUp", {
+    _logEvent("LevelUp", {
         game: GAME_NAME,
         level: level,
     });
@@ -280,7 +276,7 @@ function logLevelUp(level) {
  * @param {string} score Score the player achieved.
  */
 function logScore(score) {
-    logEvent("PostScore", {
+    _logEvent("PostScore", {
         game: GAME_NAME,
         score: score,
     });
@@ -294,7 +290,7 @@ function logScore(score) {
  * @param {string} choice Choice the player made. Ex: Blue Dog
  */
 function logGameChoice(decision, choice) {
-    logEvent("GameChoice", {
+    _logEvent("GameChoice", {
         game: GAME_NAME,
         decision: decision,
         choice: choice,
@@ -302,10 +298,10 @@ function logGameChoice(decision, choice) {
 }
 
 // This is automatically called when the Wortal SDK is initialized. It should not be called by the game.
-function logGameStart(country) {
+function _logGameStart(country) {
     const platform = window.getWortalPlatform();
     const browser = navigator.userAgent;
-    logEvent("GameStart", {
+    _logEvent("GameStart", {
         game: GAME_NAME,
         platform: platform,
         browser: browser,
@@ -319,34 +315,33 @@ function logGameStart(country) {
 }
 
 // This is automatically called when the browser is closed. It should not be called by the game.
-function logGameEnd() {
-    logEvent("GameEnd", {
+function _logGameEnd() {
+    _logEvent("GameEnd", {
         game: GAME_NAME,
         timePlayed: gameTimer,
     });
 }
 
-// This should not be directly called, instead use the logEvent functions that correspond to the event
+// This should not be directly called, instead use the event functions that correspond to the event
 // you want to report.
-function logEvent(name, features) {
+function _logEvent(name, features) {
     let request = new XMLHttpRequest();
     request.open("POST", "https://wombat.digitalwill.co.jp/wortal/events");
     request.setRequestHeader("Content-Type", "application/json");
     request.send(JSON.stringify({ name, features }));
 }
 
-//TODO: fetch this from CDN
-function getIntlData() {
+function _getIntlData() {
     return fetch('./intl-data.json')
         .then(response => response.json())
-        .then(data => getPlayerCountry(data))
+        .then(data => _getPlayerCountry(data))
         .catch(error => console.log(error));
 }
 
 // This uses the time zone setting of the player to determine their country.
 // We do this to avoid collecting any personal data on the player for GDPR compliance.
 // The location is very coarse and easily spoofed so nothing here can identify the player.
-function getPlayerCountry(data) {
+function _getPlayerCountry(data) {
     if (data == null) {
         return "Nulltherlands";
     }
@@ -356,11 +351,11 @@ function getPlayerCountry(data) {
     return data[city];
 }
 
-function removeLoadingCover() {
+function _removeLoadingCover() {
     document.getElementById('loading-cover').style.display = 'none';
 }
 
-function getLinkAdUnitIds() {
+function _getLinkAdUnitIds() {
     wortalGame.getAdUnitsAsync().then((adUnits) => {
         console.log('[Wortal] Link AdUnit IDs returned: \n' + adUnits);
         linkInterstitialId = adUnits[0].id;
