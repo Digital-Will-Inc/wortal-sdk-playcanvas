@@ -14,11 +14,6 @@ InterstitialDemo.prototype.initialize = function() {
                 app.fire("log:add", "Game is resumed from afterAd.");
                 // Resume the game and audio here.
             },
-            noShow: function () {
-                console.log("[Wortal] NoShow");
-                app.fire("log:add", "Game is resumed from noShow.");
-                // Resume the game and audio here.
-            }
         });
     }, this);
 };

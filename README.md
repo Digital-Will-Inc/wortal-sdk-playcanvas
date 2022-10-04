@@ -3,7 +3,7 @@
 ## Installation
 1. Add `wortal.js` to the game
     1. Included in the [Wortal SDK demo project](https://playcanvas.com/project/984829)
-    2. Available on [GitHub](https://github.com/Digital-Will-Inc/html5-games/blob/main/Utils/wortal.js)
+    2. Available on [GitHub](https://github.com/Digital-Will-Inc/wortal-sdk-playcanvas/blob/master/src/wortal.js)
 2. Set `GAME_NAME` in `wortal.js` to the game’s name
 3. Set [Loading Type](https://developer.playcanvas.com/en/user-manual/scripting/loading-order/) to [After Engine](https://developer.playcanvas.com/en/user-manual/scripting/application-lifecyle/) for `wortal.js`
 
@@ -13,15 +13,15 @@
     1. Demo scripts included in the [Wortal SDK demo project](https://playcanvas.com/project/984829)
     2. Example snippets in the How to Use section
 5. Build the game
-6. Add [intl-data.json](res/intl-data.json) to the root of the build directory
+6. Add [intl-data.json](https://github.com/Digital-Will-Inc/wortal-sdk-playcanvas/blob/master/res/intl-data.json) to the root of the build directory
 7. Modify the `index.html` to include required changes
 8. Create a `.zip` archive of the game with the `index.html` at the root
 9. Upload build to the Wortal dashboard
 
-## Required Changes to index.html
+### Required Changes to index.html
 The Wortal SDK requires a couple modifications to the game’s `body` section to work properly.
 
-### Loading Cover
+#### Loading Cover
 The game is required to delay rendering and playing audio until any possible pre-roll ad has finished playing.
 
 The following div needs to be added to the `<body>`:
@@ -29,7 +29,7 @@ The following div needs to be added to the `<body>`:
 <div class="loading-cover" id="loading-cover" style="background: #000; width: 100%; height: 100%; position: fixed; z-index: 100;"></div>
 ```
 
-### Loading Progress
+#### Loading Progress
 Some platforms require the game to use their splash screen and loading progress bar. To comply with this requirement the game must report its loading progress to the Wortal. Failure to do so will result in the game not starting on certain platforms.
 
 The following script should be added immediately after the `__loading__.js` script:
@@ -45,7 +45,7 @@ The following script should be added immediately after the `__loading__.js` scri
 </script>
 ```
 
-### Example index.html
+#### Example index.html
 The following example shows what a modified `index.html` may look like, and the specific positions the above code should be added:
 
 ```html

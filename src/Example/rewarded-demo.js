@@ -14,19 +14,6 @@ RewardedDemo.prototype.initialize = function() {
                 app.fire("log:add", "Game is resumed from afterAd.");
                 // Resume the game and audio here.
             },
-            noShow: function () {
-                console.log("[Wortal] NoShow");
-                app.fire("log:add", "Game is resumed from noShow.");
-                // Resume the game and audio here.
-            },
-            beforeReward: function (showAdFn) {
-                console.log("[Wortal] BeforeReward");
-                app.fire("log:add", "Waiting to confirm rewarded ad play.");
-                showAdFn();
-                // This is reached before showing the player a rewarded ad.
-                // Here you can ask the player if they want to watch or not.
-                // Or explain what the reward for watching is.
-            },
             adDismissed: function () {
                 console.log("[Wortal] AdDismissed");
                 app.fire("log:add", "Not rewarding player.");
