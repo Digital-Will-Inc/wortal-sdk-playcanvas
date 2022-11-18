@@ -1,140 +1,147 @@
 # Wortal SDK for PlayCanvas
 
 ## Installation
-1. Add `wortal.js` to the game
-    1. Included in the [Wortal SDK demo project](https://playcanvas.com/project/984829)
-    2. Available on [GitHub](https://github.com/Digital-Will-Inc/wortal-sdk-playcanvas/blob/master/src/wortal.js)
-2. Set `GAME_NAME` in `wortal.js` to the game’s name
-3. Set [Loading Type](https://developer.playcanvas.com/en/user-manual/scripting/loading-order/) to [After Engine](https://developer.playcanvas.com/en/user-manual/scripting/application-lifecyle/) for `wortal.js`
+1. Add `Wortal` scripts to the game:
+    1. Folder included in the [Wortal SDK demo project](https://playcanvas.com/project/984829)
+    2. Package available on [GitHub](https://github.com/Digital-Will-Inc/wortal-sdk-playcanvas/releases)
+2. Set [Loading Type](https://developer.playcanvas.com/en/user-manual/scripting/loading-order/) to [After Engine](https://developer.playcanvas.com/en/user-manual/scripting/application-lifecyle/) for `wortal.js`
 
 ![Loading Type Settings](/docs/img/playcanvas-loading-type.png)
 
-4. Call for ads in the game code
-    1. Demo scripts included in the [Wortal SDK demo project](https://playcanvas.com/project/984829)
-    2. Example snippets in the How to Use section
-5. Build the game
-6. Add [intl-data.json](https://github.com/Digital-Will-Inc/wortal-sdk-playcanvas/blob/master/res/intl-data.json) to the root of the build directory
-7. Modify the `index.html` to include required changes
-8. Create a `.zip` archive of the game with the `index.html` at the root
-9. Upload build to the Wortal dashboard
-
-### Required Changes to index.html
-The Wortal SDK requires a couple modifications to the game’s `body` section to work properly.
-
-#### Loading Cover
-The game is required to delay rendering and playing audio until any possible pre-roll ad has finished playing.
-
-The following div needs to be added to the `<body>`:
-```html
-<div class="loading-cover" id="loading-cover" style="background: #000; width: 100%; height: 100%; position: fixed; z-index: 100;"></div>
-```
-
-#### Loading Progress
-Some platforms require the game to use their splash screen and loading progress bar. To comply with this requirement the game must report its loading progress to the Wortal. Failure to do so will result in the game not starting on certain platforms.
-
-The following script should be added immediately after the `__loading__.js` script:
-```html
-<script>
-    var app = pc.Application.getApplication();
-    app.on('preload:progress', setProgress);
-    function setProgress(value) {
-        if (window.wortalGame) {
-            wortalGame.setLoadingProgress(value * 100);
-        }
-    }
-</script>
-```
-
-#### Example index.html
-The following example shows what a modified `index.html` may look like, and the specific positions the above code should be added:
-
-```html
-<!doctype html>
-<html>
-<head>
-    <meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover' />
-    <meta charset='utf-8'>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="manifest" href="manifest.json">
-    <style></style>
-    <title>Really Fun Game</title>
-    <script src="playcanvas-stable.min.js"></script>
-    <!-- This is added here during the build if it is marked ‘After Engine’ -->
-    <script src="files/assets/102672447/1/wortal.js"></script>
-    <script src="__settings__.js"></script>
-</head>
-<body>
-<!-- This should be first in the body to cover anything else from rendering too early -->
-<div class="loading-cover" id="loading-cover" style="background: #000; width: 100%; height: 100%; position: fixed; z-index: 100;"></div>
-<script src="__modules__.js"></script>
-<script src="__start__.js"></script>
-<script src="__loading__.js"></script>
-<!-- This should be added here to report the loading progress -->
-<script>
-    var app = pc.Application.getApplication();
-    app.on('preload:progress', setProgress);
-    function setProgress(value) {
-        if(window.wortalGame) {
-            wortalGame.setLoadingProgress(value * 100);
-        }
-    }
-</script>
-</body>
-</html>
-```
-
 ## How to Use
-### Interstitial Ads
-Interstitial ads are convenient to show to players at certain milestones throughout your game. Ex: Player finishes a level, player levels up, etc.
-```javascript
-showInterstitial(Placement.NEXT, 'NextLevel', {
-    beforeAd: function () {
-        console.log("[Wortal] BeforeAd");
-        // Pause the game and audio here.
-    },
-    afterAd: function () {
-        console.log("[Wortal] AfterAd");
-        // Resume the game and audio here.
-    },
-});
-```
 
-### Rewarded Ads
-Rewarded ads can be used to offer the player bonuses or other incentives during the game. These ads are longer and require the player to watch the ad in its entirety to receive the reward, but are optional.
+### Ads
+
+[API Reference](https://sdk.html5gameportal.com/api/ads/)
+
+Interstitial ads can be shown at various points in the game such as a level end, restart or a timed
+interval in games with longer levels.
 
 ```javascript
-showRewarded('ReviveAndContinue', {
-    beforeAd: function () {
-        console.log("[Wortal] BeforeAd");
-        // Pause the game and audio here.
-    },
-    afterAd: function () {
-        console.log("[Wortal] AfterAd");
-        // Resume the game and audio here.
-    },
-    adDismissed: function () {
-        console.log("[Wortal] AdDismissed");
-        // Do not reward the player, they did not watch the entire ad.
-    },
-    adViewed: function () {
-        console.log("[Wortal] AdViewed");
-        // Reward the player here, they watched the entire ad.
-    }
-});
+// Player reached the next level.
+wortalAdsShowInterstitial('next', 'NextLevel', pauseGame, resumeGame);
+
+// Player paused the game.
+wortalAdsShowInterstitial('pause', 'PausedGame', pauseGame, resumeGame);
+
+// Player opened the IAP shop.
+wortalAdsShowInterstitial('browse', 'BrowseShop', pauseAudio, resumeAudio);
 ```
+
+Rewarded ads can be shown too. These are longer, optional ads that the player can earn a reward for watching. The player
+must be notified of the ad and give permission to show before it can be shown.
+
+```javascript
+// This examples shows the game flow independent of the outcome of the ad.
+wortalAdsShowRewarded('BonusCoins', pauseGame, resumeGame, skipBonus, addBonusCoins);
+
+// This example shows the game flow depending on the outcome of the ad.
+wortalAdsShowRewarded('ReviveAndContinue', pauseAudio, resumeAudio, endGame, continueGame);
+```
+
+**NOTE**: Players should only be rewarded in the `adViewed` callback.
 
 ### Analytics
-The analytics API can be used to track in game events to get a better understanding of how players are interacting with the game.
+
+[API Reference](https://sdk.html5gameportal.com/api/analytics/)
+
+The Analytics API can be used to track game events that can help better understand how players are interacting with
+the game. This data will be available for viewing in the Wortal dashboard.
 
 ```javascript
-// Log an event at the beginning of the level.
-logLevelStart(level);
+// Logs the start of the level.
+wortalAnalyticsLogLevelStart('Level 3');
 
-// Log an event at the end of the level which will track how long it took the player to finish.
-logLevelEnd(level, score, wasCompleted);
+// Logs the end of the level. Will track the time spent playing the level if the name matches
+// the name of the last logLevelStart() call.
+wortalAnalyticsLogLevelEnd('Level 3', '100', true);
 
-// Log the player's choice when offered different options.
-// This can be useful for determining which characters are more popular, or paths are more commonly taken, etc.
-// This can be a powerful tool for balancing the game and giving the players more of what they enjoy.
-logGameChoice('Character', 'Blue');
+// Logs a choice the player made in the game. This can be useful for balancing the game
+// and seeing what content your players interact with the most.
+wortalAnalyticsLogGameChoice('Character', 'Blue');
+```
+
+### Context
+
+[API Reference](https://sdk.html5gameportal.com/api/context/)
+
+The Context API is used to connect players and allow them to interact in the game session, share their content
+and send messages to each other.
+
+```javascript
+// Invite a friend to play the game.
+wortalContextChooseAsync('Invite text', 'https://link.to.img', {
+    caption: 'Play',
+    data: { exampleData: 'yourData' },
+})
+
+// Share your game activity with friends.
+wortalContextShareAsync('Share text', 'https://link.to.img', {
+    caption: 'Play',
+    data: { exampleData: 'yourData' },
+}).then(result => console.log(result); // Contains shareCount with number of friends the share was sent to.
+```
+
+### In-App Purchases
+
+[API Reference](https://sdk.html5gameportal.com/api/iap/)
+
+The In-App Purchases (IAP) API is used to provide an interface for in-game transactions on the platforms.
+This process will differ based on what platform the game is being played on, but the API remains the same.
+
+```javascript
+// Get the catalog of products the player can purchase.
+wortalIAPGetCatalogAsync()
+    .then(products => console.log(products));
+
+// Purchase a product.
+wortalIAPMakePurchaseAsync({
+    productID: 'my_product_123',
+}).then(purchase => console.log(purchase));
+```
+
+### Leaderboards
+
+[API Reference](https://sdk.html5gameportal.com/api/leaderboard/)
+
+The Leaderboard API gives the game access to the platform's leaderboard functionality. This is where
+you can track player's scores and compare them to other players.
+
+```javascript
+// Get the top 10 entries on the global leaderboard.
+wortalLeaderboardGetEntriesAsync('global', 10)
+    .then(entries => console.log(entries);
+
+// Add the player's score to the leaderboard.
+wortalLeaderboardSendEntryAsync('global', 100);
+```
+
+### Player
+
+[API Reference](https://sdk.html5gameportal.com/api/player/)
+
+You can find details about the current player via the Player API.
+
+```javascript
+// Get the player's name.
+wortalPlayerGetName();
+
+// Get a list of the player's friends who have also played this game.
+wortalPlayerGetConnectedPlayersAsync({
+    filter: 'ALL',
+    size: 20,
+    hoursSinceInvitation: 4,
+}).then(players => console.log(players.length);
+```
+
+### Session
+
+[API Reference](https://sdk.html5gameportal.com/api/session/)
+
+Details about the current session can be accessed in the Session API.
+
+```javascript
+// Get the entry point of where the game started from.
+wortalSessionGetEntryPointAsync()
+ .then(entryPoint => console.log(entryPoint);
 ```
