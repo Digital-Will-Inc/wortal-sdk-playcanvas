@@ -14,17 +14,17 @@ function wortalContextGetId() {
 /**
  * Opens the platform UI to select friends to invite and play with.
  * @example
- * wortal.context.chooseAsync('Invite text', 'https://link.to.img', {
+ * wortal.context.chooseAsync({
+ *     image: 'data:base64Image',
+ *     text: 'Invite text',
  *     caption: 'Play',
  *     data: { exampleData: 'yourData' },
  * })
- * @param {string} text Message body of the share. This is required for the share to succeed.
- * @param {string} image URL to the base64 image to include with this share. This is required for the share to succeed.
  * @param {contextPayload} payload Object defining the options for the context choice.
  * @returns {Promise<void>}
  */
-function wortalContextChooseAsync(text, image, payload) {
-    return window.Wortal.context.chooseAsync(text, image, payload);
+function wortalContextChooseAsync(payload) {
+    return window.Wortal.context.chooseAsync(payload);
 }
 
 /**
@@ -52,39 +52,39 @@ function wortalContextSwitchAsync(contextId) {
 /**
  * Shares a message to the player's friends. Will trigger a UI for the player to choose which friends to share with.
  * @example
- * wortal.context.shareAsync('Share text', 'https://link.to.img', {
+ * wortal.context.shareAsync({
+ *     image: 'data:base64image',
+ *     text: 'Share text',
  *     caption: 'Play',
  *     data: { exampleData: 'yourData' },
  * }).then(result => console.log(result); // Contains shareCount with number of friends the share was sent to.
- * @param {string} text Message body of the share.
- * @param {string} image URL to the base64 image to include with this share.
  * @param {contextPayload} payload Object defining the share message.
  * @returns {Promise<number>} Number of friends the message was shared with.
  */
-function wortalContextShareAsync(text, image, payload) {
-    return window.Wortal.context.shareAsync(text, image, payload);
+function wortalContextShareAsync(payload) {
+    return window.Wortal.context.shareAsync(payload);
 }
 
 /**
  * Posts an update to the current context. Will send a message to the chat thread of the current context.
  * @example
- * wortal.context.updateAsync('Update text', 'https://link.to.img', {
+ * wortal.context.updateAsync({
+ *     image: 'data:base64image',
+ *     text: 'Update text',
  *     caption: 'Play',
  *     data: { exampleData: 'yourData' },
  * });
- * @param {string} text Message body of the update.
- * @param {string} image URL to the base64 image to include with this update.
  * @param {contextPayload} payload Object defining the update message.
  * @returns {Promise<void>}
  */
-function wortalContextUpdateAsync(text, image, payload) {
-    return window.Wortal.context.updateAsync(text, image, payload);
+function wortalContextUpdateAsync(payload) {
+    return window.Wortal.context.updateAsync(payload);
 }
 
 /**
  * @typedef contextPayload
- * @property {string | undefined} image URL of base64 encoded image to be displayed. This is required for the payload to be sent.
- * @property {string | localizableContent | undefined} text Message body. This is required for the payload to be sent.
+ * @property {string} image URL of base64 encoded image to be displayed. This is required for the payload to be sent.
+ * @property {string | localizableContent} text Message body. This is required for the payload to be sent.
  * @property {string | localizableContent | undefined} caption Text of the call-to-action button.
  * @property {string | localizableContent | undefined} cta Text of the call-to-action button.
  * @property {Record<string, unknown> | undefined} data Object passed to any session launched from this context message.
