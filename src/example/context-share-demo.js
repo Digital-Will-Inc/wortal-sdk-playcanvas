@@ -3,7 +3,9 @@ var ContextShareDemo = pc.createScript('contextShareDemo');
 ContextShareDemo.prototype.initialize = function () {
     this.entity.button.on('click', function (event) {
         const app = this.app;
-        wortalContextShareAsync('Share', createImg(1200, 1200), {
+        wortalContextShareAsync({
+            image: createImg(1200, 1200),
+            text: 'Share',
             intent: "REQUEST",
             caption: "Play",
         }).then(res => {

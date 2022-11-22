@@ -70,13 +70,17 @@ and send messages to each other.
 
 ```javascript
 // Invite a friend to play the game.
-wortalContextChooseAsync('Invite text', 'https://link.to.img', {
+wortalContextChooseAsync({
+    image: 'data:base64Image',
+    text: 'Invite text',
     caption: 'Play',
     data: { exampleData: 'yourData' },
 })
 
 // Share your game activity with friends.
-wortalContextShareAsync('Share text', 'https://link.to.img', {
+wortalContextShareAsync({
+    image: 'data:base64image',
+    text: 'Share text',
     caption: 'Play',
     data: { exampleData: 'yourData' },
 }).then(result => console.log(result); // Contains shareCount with number of friends the share was sent to.
