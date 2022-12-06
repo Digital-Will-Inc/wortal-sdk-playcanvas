@@ -32,7 +32,7 @@ Rewarded ads can be shown too. These are longer, optional ads that the player ca
 must be notified of the ad and give permission to show before it can be shown.
 
 ```javascript
-// This examples shows the game flow independent of the outcome of the ad.
+// This example shows the game flow independent of the outcome of the ad.
 wortalAdsShowRewarded('BonusCoins', pauseGame, resumeGame, skipBonus, addBonusCoins);
 
 // This example shows the game flow depending on the outcome of the ad.
