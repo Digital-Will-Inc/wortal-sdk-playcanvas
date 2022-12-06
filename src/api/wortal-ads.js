@@ -24,7 +24,7 @@ function wortalAdsShowInterstitial(placement, description, beforeAd, afterAd) {
  * Shows a rewarded ad. These are longer, optional ads that the player can earn a reward for watching. The player
  * must be notified of the ad and give permission to show before it can be shown.
  * @example
- * // This examples shows the game flow independent of the outcome of the ad.
+ * // This example shows the game flow independent of the outcome of the ad.
  * wortal.ads.showRewarded('BonusCoins', pauseGame, resumeGame, skipBonus, addBonusCoins);
  *
  * // This example shows the game flow depending on the outcome of the ad.
