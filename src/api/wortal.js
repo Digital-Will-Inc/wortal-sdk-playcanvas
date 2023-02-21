@@ -1,5 +1,5 @@
 const wortal = document.createElement('script');
-wortal.src = 'https://cdn.html5gameportal.com/wortal-sdk/wortal-core-1.2.0.js';
+wortal.src = 'https://storage.googleapis.com/html5gameportal.com/wortal-sdk/wortal-core-1.3.0.js';
 wortal.type = 'text/javascript';
 wortal.onload = () => checkForBody();
 document.head.appendChild(wortal);
@@ -25,4 +25,14 @@ function checkForBody() {
 
 function addLoader() {
     document.body.appendChild(wortalLoader);
+}
+
+/**
+ * Registers a callback for when the game is paused via platform SDK.
+ * @param callback
+ */
+function onPause(callback) {
+    window.Wortal.onPause(() => {
+        callback();
+    });
 }
