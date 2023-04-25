@@ -11,10 +11,17 @@ function wortalIAPIsEnabled() {
 /**
  * Gets the catalog of available products the player can purchase.
  * @example
- * wortal.iap.getCatalogAsync()
+ * wortalIAPGetCatalogAsync()
  *  .then(products => console.log(products));
  * @returns {Promise<product[]>} Array of products available to the player. Returns an empty list if there are no
  * products available for the player to purchase.
+ * @throws {ErrorMessage} See error.message for details.
+ * <ul>
+ * <li>NOT_SUPPORTED</li>
+ * <li>CLIENT_UNSUPPORTED_OPERATION</li>
+ * <li>PAYMENTS_NOT_INITIALIZED</li>
+ * <li>NETWORK_FAILURE</li>
+ * </ul>
  */
 function wortalIAPGetCatalogAsync() {
     return window.Wortal.iap.getCatalogAsync();
@@ -24,9 +31,16 @@ function wortalIAPGetCatalogAsync() {
  * Gets the purchases the player has made that have not yet been consumed. Purchase signature should be
  * validated on the game developer's server or transaction database before provisioning the purchase to the player.
  * @example
- * wortal.iap.getPurchasesAsync()
+ * wortalIAPGetPurchasesAsync()
  *  .then(purchases => console.log(purchases));
  * @returns {Promise<purchase[]>} Array of purchases.
+ * @throws {ErrorMessage} See error.message for details.
+ * <ul>
+ * <li>NOT_SUPPORTED</li>
+ * <li>CLIENT_UNSUPPORTED_OPERATION</li>
+ * <li>PAYMENTS_NOT_INITIALIZED</li>
+ * <li>NETWORK_FAILURE</li>
+ * </ul>
  */
 function wortalIAPGetPurchasesAsync() {
     return window.Wortal.iap.getPurchasesAsync();
@@ -35,23 +49,43 @@ function wortalIAPGetPurchasesAsync() {
 /**
  * Attempts to make a purchase of the given product. Will launch the native IAP screen and return the result.
  * @example
- * wortal.iap.makePurchaseAsync({
+ * wortalIAPMakePurchaseAsync({
  *     productID: 'my_product_123',
  * }).then(purchase => console.log(purchase));
  * @param {purchaseConfig} purchase Object defining the product ID and purchase information.
- * @returns {Promise<purchase>} Information about the purchase.
+ * @returns {Promise<purchase>} A Promise that resolves when the product is successfully purchased by the player. Otherwise, it rejects.
+ * @throws {ErrorMessage} See error.message for details.
+ * <ul>
+ * <li>NOT_SUPPORTED</li>
+ * <li>CLIENT_UNSUPPORTED_OPERATION</li>
+ * <li>PAYMENTS_NOT_INITIALIZED</li>
+ * <li>INVALID_PARAM</li>
+ * <li>NETWORK_FAILURE</li>
+ * <li>INVALID_OPERATION</li>
+ * <li>USER_INPUT</li>
+ * </ul>
  */
 function wortalIAPMakePurchaseAsync(purchase) {
     return window.Wortal.iap.makePurchaseAsync(purchase);
 }
 
 /**
- * Consumes the given purchase. This will remove the purchase from the player's available purchases inventory and
- * reset its availability in the catalog.
+ * Consumes a specific purchase belonging to the current player. Before provisioning a product's effects to the player,
+ * the game should request the consumption of the purchased product. Once the purchase is successfully consumed,
+ * the game should immediately provide the player with the effects of their purchase. This will remove the
+ * purchase from the player's available purchases inventory and reset its availability in the catalog.
  * @example
- * wortal.iap.consumePurchaseAsync('abc123');
- * @param {string} token String representing the purchaseToken of the item to consume.
- * @returns {Promise<void>}
+ * wortalIAPConsumePurchaseAsync('abc123');
+ * @param {string} token The purchase token of the purchase that should be consumed.
+ * @returns {Promise<void>} A Promise that resolves when the purchase is successfully consumed. Otherwise, it rejects.
+ * @throws {ErrorMessage} See error.message for details.
+ * <ul>
+ * <li>NOT_SUPPORTED</li>
+ * <li>CLIENT_UNSUPPORTED_OPERATION</li>
+ * <li>PAYMENTS_NOT_INITIALIZED</li>
+ * <li>INVALID_PARAM</li>
+ * <li>NETWORK_FAILURE</li>
+ * </ul>
  */
 function wortalIAPConsumePurchaseAsync(token) {
     return window.Wortal.iap.consumePurchaseAsync(token);
