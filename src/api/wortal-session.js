@@ -1,8 +1,11 @@
 
 /**
- * Gets the data bound to the entry point.
+ * Returns any data object associated with the entry point that the game was launched from.
+ *
+ * The contents of the object are developer-defined, and can occur from entry points on different platforms.
+ * This will return null for older mobile clients, as well as when there is no data associated with the particular entry point.
  * @example
- * let data = wortal.session.getEntryPointData();
+ * let data = wortalSessionGetEntryPointData();
  * console.log(data.property);
  * @returns {Record<string, unknown>} Data about the entry point or an empty object if none exists.
  */
@@ -11,20 +14,28 @@ function wortalSessionGetEntryPointData() {
 }
 
 /**
- * Gets the entry point of where the game started from.
+ * Returns the entry point that the game was launched from.
  * @example
- * wortal.session.getEntryPointAsync()
+ * wortalSessionGetEntryPointAsync()
  *  .then(entryPoint => console.log(entryPoint);
- * @returns {Promise<string>} Details about where the game started from.
+ * @returns {Promise<string>} The name of the entry point from which the user started the game
+ * @throws {ErrorMessage} See error.message for details.
+ * <ul>
+ * <li>NOT_SUPPORTED</li>
+ * <li>RETHROW_FROM_PLATFORM</li>
+ * </ul>
  */
 function wortalSessionGetEntryPointAsync() {
     return window.Wortal.session.getEntryPointAsync();
 }
 
 /**
- * Sets the data for this session. This is not persistent and is only used to populate webhook events.
+ * Sets the data associated with the individual gameplay session for the current context.
+ *
+ * This function should be called whenever the game would like to update the current session data.
+ * This session data may be used to populate a variety of payloads, such as game play webhooks.
  * @example
- * wortal.session.setSessionData({
+ * wortalSessionSetSessionData({
  *     'high-score': 100,
  *     'current-level': 2,
  * });
@@ -35,9 +46,9 @@ function wortalSessionSetSessionData(data) {
 }
 
 /**
- * Gets the locale the player is using.
+ * Gets the locale the player is using. This is useful for localizing your game.
  * @example
- * let lang = wortal.session.getLocale();
+ * let lang = wortalSessionGetLocale();
  * @returns {string} Locale in [BCP47](http://www.ietf.org/rfc/bcp/bcp47.txt) format.
  */
 function wortalSessionGetLocale() {
@@ -45,9 +56,10 @@ function wortalSessionGetLocale() {
 }
 
 /**
- * Gets the traffic source info for the game.
+ * Gets the traffic source info for the game. This is useful for tracking where players are coming from.
+ * For example, if you want to track where players are coming from for a specific campaign.
  * @example
- * let source = wortal.session.getTrafficSource();
+ * let source = wortalSessionGetTrafficSource();
  * console.log(source['r_entrypoint']);
  * console.log(source['utm_source']);
  * @returns {trafficSource} URL parameters attached to the game.
@@ -57,7 +69,24 @@ function wortalSessionGetTrafficSource() {
 }
 
 /**
+ * Gets the platform the game is running on. This is useful for platform specific code.
+ * For example, if you want to show a different social share asset on Facebook than on Link.
+ * @example
+ * let platform = wortalSessionGetPlatform();
+ * console.log(platform);
+ * @returns {platform} Platform the game is running on.
+ */
+function wortalSessionGetPlatform() {
+    return window.Wortal.session.getPlatform();
+}
+
+/**
  * @typedef trafficSource
  * @property {string | undefined} ['utm_source']
  * @property {string | undefined} ['r_entrypoint']
+ */
+
+/**
+ * @typedef {string} platform
+ * 'wortal' | 'link' | 'viber' | 'gd' | 'facebook' | 'debug'
  */
