@@ -4,7 +4,7 @@
  * @example
  * wortalAnalyticsLogLevelStart('Level 3');
  * @param {string} level Name of the level.
- * @throws {ErrorMessage} See error.message for more details.
+ * @throws {errorMessage} See error.message for more details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
@@ -22,7 +22,7 @@ function wortalAnalyticsLogLevelStart(level) {
  * @param {string} level Name of the level.
  * @param {string} score Score the player achieved.
  * @param {boolean} wasCompleted Was the level completed or not.
- * @throws {ErrorMessage} See error.message for more details.
+ * @throws {errorMessage} See error.message for more details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
@@ -36,7 +36,7 @@ function wortalAnalyticsLogLevelEnd(level, score, wasCompleted) {
  * @example
  * wortalAnalyticsLogLevelUp('Level 7');
  * @param {string} level Level the player achieved.
- * @throws {ErrorMessage} See error.message for more details.
+ * @throws {errorMessage} See error.message for more details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
@@ -50,7 +50,7 @@ function wortalAnalyticsLogLevelUp(level) {
  * @example
  * wortalAnalyticsLogScore('100');
  * @param {string} score Score the player achieved.
- * @throws {ErrorMessage} See error.message for more details.
+ * @throws {errorMessage} See error.message for more details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
@@ -89,7 +89,7 @@ function wortalAnalyticsLogTutorialEnd(tutorial, wasCompleted) {
  * wortalAnalyticsLogGameChoice('Character', 'Blue');
  * @param {string} decision Decision the player was faced with.
  * @param {string} choice Choice the player made.
- * @throws {ErrorMessage} See error.message for more details.
+ * @throws {errorMessage} See error.message for more details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
