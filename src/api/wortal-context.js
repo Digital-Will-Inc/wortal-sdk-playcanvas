@@ -2,7 +2,7 @@
 /**
  * Gets the ID of the current context.
  * @example
- * let id = wortalContextGetId();
+ * const id = wortalContextGetId();
  * console.log(id);
  * @returns {string | null} String ID of the current context if one exists. Null if the player is playing solo or
  * if the game is being played on a platform that does not currently support context.
@@ -14,15 +14,9 @@ function wortalContextGetId() {
 /**
  * Gets the type of the current context.
  * @example
- * let type = wortalContextGetType();
+ * const type = wortalContextGetType();
  * console.log(type);
- * @returns {contextType} The type of the current context. Possible values:
- * <ul>
- * <li>SOLO - Default</li>
- * <li>THREAD</li>
- * <li>GROUP - Facebook only</li>
- * <li>POST - Facebook only</li>
- * </ul>
+ * @returns {contextType} The type of the current context.
  */
 function wortalContextGetType() {
     return window.Wortal.context.getType();
@@ -30,7 +24,7 @@ function wortalContextGetType() {
 
 /**
  * Gets an array of WortalPlayer objects containing information about active players in the current context
- * (people who played the game in the current context in the last 90 days). This may include the current player.
+ * (people who played the game in the current context in the last 90 days).
  * @example
  * wortalContextGetPlayersAsync()
  *  .then(players => {
@@ -38,8 +32,8 @@ function wortalContextGetType() {
  *    console.log(players[0].id);
  *    console.log(players[0].name);
  *    });
- * @returns {Promise<wortalPlayer[]>} Array of players in the current context.
- * @throws {ErrorMessage} See error.message for details.
+ * @returns {Promise<wortalPlayer[]>} Promise that contains an array of players in the current context. This may include the current player.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>NETWORK_FAILURE</li>
@@ -62,9 +56,9 @@ function wortalContextGetPlayersAsync() {
  *     caption: 'Play',
  *     data: { exampleData: 'yourData' },
  * })
- * @param {contextPayload} payload Object defining the options for the context choice.
- * @returns {Promise<void>} A promise that resolves with an array of player IDs of the players that were invited.
- * @throws {ErrorMessage} See error.message for details.
+ * @param {choosePayload} payload Object defining the options for the context choice.
+ * @returns {Promise<void>} Promise that resolves when the context is switched.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>INVALID_PARAM</li>
@@ -90,9 +84,11 @@ function wortalContextChooseAsync(payload) {
  * resolve when the game has switched into the new context.</p>
  * @example
  * wortalContextCreateAsync('player123');
- * @param {string} playerId ID of player to create a context with.
- * @returns {Promise<void>} A promise that resolves when the game has switched into the new context, or rejects otherwise.
- * @throws {ErrorMessage} See error.message for details.
+ * @param {string} playerId ID of player to create a context with, or a list of player IDs to create a context with.
+ * If not specified, a friend picker will be loaded to ask the player to create a context with friends to play with.
+ * Link and Viber will only accept a single, required player ID.
+ * @returns {Promise<void>} Promise that resolves when the game has switched into the new context, or rejects otherwise.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>INVALID_PARAM</li>
@@ -114,8 +110,8 @@ function wortalContextCreateAsync(playerId) {
  * @example
  * wortalContextSwitchAsync('abc123');
  * @param {string} contextId ID of the context to switch to.
- * @returns {Promise<void>} A promise that resolves when the game has switched into the specified context, or rejects otherwise.
- * @throws {ErrorMessage} See error.message for details.
+ * @returns {Promise<void>} Promise that resolves when the game has switched into the specified context, or rejects otherwise.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>INVALID_PARAM</li>
@@ -131,6 +127,40 @@ function wortalContextSwitchAsync(contextId) {
 }
 
 /**
+ * This invokes a dialog to let the user invite one or more people to the game. A blob of data can be attached to the
+ * invite which every game session launched from the invite will be able to access from Wortal.session.getEntryPointData().
+ * This data must be less than or equal to 1000 characters when stringified. The user may choose to cancel the action
+ * and close the dialog, and the returned promise will resolve when the dialog is closed regardless of whether the user
+ * actually invited people or not. The sections included in the dialog can be customized by using the sections parameter.
+ * This can specify which sections to include, how many results to include in each section, and what order the sections
+ * should appear in. The last section will include as many results as possible. If no sections are specified, the
+ * default section settings will be applied. The filters parameter allows for filtering the results. If no results are
+ * returned when the filters are applied, the results will be generated without the filters.
+ * @example
+ * wortalContextInviteAsync({
+ *    image: 'data:base64Image',
+ *    text: 'Invite text',
+ *    cta: 'Play',
+ *    data: { exampleData: 'yourData' },
+ * }).then(() => console.log("Invite sent!"))
+ * @param {invitePayload} payload Specify what to share in the invite. See example for details.
+ * @returns {Promise<number>} Promise that resolves when the platform's friend picker has closed.
+ * Includes number of friends the invite was shared with. Facebook will always return 0.
+ * @throws {errorMessage} See error.message for details.
+ * <ul>
+ * <li>NOT_SUPPORTED</li>
+ * <li>INVALID_PARAM</li>
+ * <li>NETWORK_FAILURE</li>
+ * <li>PENDING_REQUEST</li>
+ * <li>CLIENT_UNSUPPORTED_OPERATION</li>
+ * <li>INVALID_OPERATION</li>
+ * </ul>
+ */
+function wortalContextInviteAsync(payload) {
+    return window.Wortal.context.inviteAsync(payload);
+}
+
+/**
  * This invokes a dialog to let the user share specified content, as a post on the user's timeline, for example.
  * A blob of data can be attached to the share which every game session launched from the share will be able to access
  * from Wortal.session.getEntryPointData(). This data must be less than or equal to 1000 characters when stringified.
@@ -140,12 +170,13 @@ function wortalContextSwitchAsync(contextId) {
  * wortalContextShareAsync({
  *     image: 'data:base64image',
  *     text: 'Share text',
- *     caption: 'Play',
+ *     cta: 'Play',
  *     data: { exampleData: 'yourData' },
- * }).then(result => console.log(result); // Contains shareCount with number of friends the share was sent to.
- * @param {contextPayload} payload Object defining the share message.
- * @returns {Promise<number>} Number of friends the message was shared with. Facebook will return 0.
- * @throws {ErrorMessage} See error.message for details.
+ * }).then(result => console.log(result);
+ * @param {sharePayload} payload Object defining the share message.
+ * @returns {Promise<number>} Promise that resolves when the platform's friend picker has closed.
+ * Includes number of friends the message was shared with. Facebook will always return 0.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>INVALID_PARAM</li>
@@ -174,9 +205,9 @@ function wortalContextShareAsync(payload) {
  *    data: { exampleData: 'yourData' },
  * })
  * .then(() => resumeGame);
- * @param payload Object defining the payload for the custom link.
+ * @param {linkSharePayload} payload Object defining the payload for the custom link.
  * @returns {Promise<void>} Promise that resolves when the dialog is closed.
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>INVALID_PARAM</li>
@@ -191,16 +222,18 @@ function wortalContextShareLinkAsync(payload) {
 
 /**
  * Posts an update to the current context. Will send a message to the chat thread of the current context.
+ * When players launch the game from this message, those game sessions will be able to access the specified blob of
+ * data through Wortal.session.getEntryPointData().
  * @example
  * wortalContextUpdateAsync({
  *     image: 'data:base64image',
  *     text: 'Update text',
- *     caption: 'Play',
+ *     cta: 'Play',
  *     data: { exampleData: 'yourData' },
  * });
- * @param {contextPayload} payload Object defining the update message.
+ * @param {updatePayload} payload Object defining the update message.
  * @returns {Promise<void>} Promise that resolves when the update is sent.
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>INVALID_PARAM</li>
@@ -213,83 +246,18 @@ function wortalContextUpdateAsync(payload) {
 }
 
 /**
- * @typedef contextPayload
- * @property {string} image URL of base64 encoded image to be displayed. This is required for the payload to be sent.
- * @property {string | localizableContent} text Message body. This is required for the payload to be sent.
- * @property {string | localizableContent | undefined} caption Text of the call-to-action button.
- * @property {string | localizableContent | undefined} cta Text of the call-to-action button.
- * @property {Record<string, unknown> | undefined} data Object passed to any session launched from this context message.
- * Its size must be <=1000 chars when stringified.
- * It can be accessed from `wortal.context.getEntryPointData()`
- * @property {[contextFilter] | undefined} filters An array of filters to be applied to the friend list. Only the first filter is currently used.
- * @property {number | undefined} maxSize Context maximum size.
- * @property {number | undefined} minSize Context minimum size.
- * @property {number | undefined} hoursSinceInvitation Specify how long a friend should be filtered out after the current player sends them a message.
- * This parameter only applies when `NEW_INVITATIONS_ONLY` filter is used.
- * When not specified, it will filter out any friend who has been sent a message.
- * @property {string | localizableContent | undefined} description Optional customizable text field in the share UI.
- * This can be used to describe the incentive a user can get from sharing.
- * @property {intent | undefined} intent Message format to be used. There's no visible difference among the available options.
- * @property {ui | undefined} ui Optional property to switch share UI mode.
- * DEFAULT: Serial contact card with share and skip button.
- * MULTIPLE: Selectable contact list.
- * @property {number | undefined} minShare Defines the minimum number of players to be selected to start sharing.
- * @property {strategy | undefined} strategy Defines how the update message should be delivered.
- * IMMEDIATE: will be sent immediately.
- * LAST: when the game session ends, the latest payload will be sent.
- * IMMEDIATE_CLEAR: will be sent immediately, and also discard any pending `LAST` payloads in the same session.
- * @property {notifications | undefined} notifications Specifies if the message should trigger push notification.
- * @property {shareDestination | undefined} shareDestination Specifies where the share should appear.
- * @property {boolean} switchContext Should the player switch context or not.
- * @property {action | undefined} action Not used
- * @property {string | undefined} template Not used
+ * This function determines whether the number of participants in the current game context is between a given minimum
+ * and maximum, inclusive. If one of the bounds is null only the other bound will be checked against. It will always
+ * return the original result for the first call made in a context in a given game play session. Subsequent calls,
+ * regardless of arguments, will return the answer to the original query until a context change occurs and the query
+ * result is reset.
+ * @example
+ * const result = wortalContextIsSizeBetween(2, 4);
+ * console.log(result.answer);
+ * @param min Minimum number of players in context.
+ * @param max Maximum number of players in context.
+ * @returns {contextSizeResponse} Object with the result of the check. Null if not supported.
  */
-
-/**
- * @typedef localizableContent
- * @property {string} default Text will be used if not finding matching locale
- * @property {Record<string, string>} localizations Key value pairs of localized strings
- */
-
-/**
- * @typedef {string} contextFilter
- * 'NEW_CONTEXT_ONLY'
- * | 'INCLUDE_EXISTING_CHALLENGES'
- * | 'NEW_PLAYERS_ONLY'
- * | 'NEW_INVITATIONS_ONLY';
- */
-
-/**
- * @typedef {string} contextType
- * 'SOLO' | 'THREAD' | 'GROUP' | 'POST'
- */
-
-/**
- * @typedef {string} intent
- * 'INVITE' | 'REQUEST' | 'CHALLENGE' | 'SHARE'
- */
-
-/**
- * @typedef {string} ui
- * 'DEFAULT' | 'MULTIPLE'
- */
-
-/**
- * @typedef {string} strategy
- * 'IMMEDIATE' | 'LAST' | 'IMMEDIATE_CLEAR'
- */
-
-/**
- * @typedef {string} notifications
- * 'NO_PUSH' | 'PUSH'
- */
-
-/**
- * @typedef {string} shareDestination
- * 'NEWSFEED' | 'GROUP' | 'COPY_LINK' | 'MESSENGER'
- */
-
-/**
- * @typedef {string} action
- * 'CUSTOM'
- */
+function wortalContextIsSizeBetween(min, max) {
+    return window.Wortal.context.isSizeBetween(min, max);
+}

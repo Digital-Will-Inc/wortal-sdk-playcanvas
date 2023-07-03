@@ -4,7 +4,7 @@
  * @example
  * wortalAnalyticsLogLevelStart('Level 3');
  * @param {string} level Name of the level.
- * @throws {ErrorMessage} See error.message for more details.
+ * @throws {errorMessage} See error.message for more details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
@@ -22,7 +22,7 @@ function wortalAnalyticsLogLevelStart(level) {
  * @param {string} level Name of the level.
  * @param {string} score Score the player achieved.
  * @param {boolean} wasCompleted Was the level completed or not.
- * @throws {ErrorMessage} See error.message for more details.
+ * @throws {errorMessage} See error.message for more details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
@@ -36,7 +36,7 @@ function wortalAnalyticsLogLevelEnd(level, score, wasCompleted) {
  * @example
  * wortalAnalyticsLogLevelUp('Level 7');
  * @param {string} level Level the player achieved.
- * @throws {ErrorMessage} See error.message for more details.
+ * @throws {errorMessage} See error.message for more details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
@@ -50,7 +50,7 @@ function wortalAnalyticsLogLevelUp(level) {
  * @example
  * wortalAnalyticsLogScore('100');
  * @param {string} score Score the player achieved.
- * @throws {ErrorMessage} See error.message for more details.
+ * @throws {errorMessage} See error.message for more details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
@@ -89,11 +89,61 @@ function wortalAnalyticsLogTutorialEnd(tutorial, wasCompleted) {
  * wortalAnalyticsLogGameChoice('Character', 'Blue');
  * @param {string} decision Decision the player was faced with.
  * @param {string} choice Choice the player made.
- * @throws {ErrorMessage} See error.message for more details.
+ * @throws {errorMessage} See error.message for more details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
  */
 function wortalAnalyticsLogGameChoice(decision, choice) {
     window.Wortal.analytics.logGameChoice(decision, choice);
+}
+
+/**
+ * Logs the player's social invite.
+ * @example
+ * wortalAnalyticsLogSocialInvite('Leaderboard View');
+ * @param placement Placement of the invite.
+ */
+function wortalAnalyticsLogSocialInvite(placement) {
+    window.Wortal.analytics.logSocialInvite(placement);
+}
+
+/**
+ * Logs the player's social share.
+ * @example
+ * wortalAnalyticsLogSocialShare('Game Over UI');
+ * @param placement Placement of the share.
+ */
+function wortalAnalyticsLogSocialShare(placement) {
+    window.Wortal.analytics.logSocialShare(placement);
+}
+
+/**
+ * Logs the player's purchase of an in-app product.
+ * @example
+ * wortalAnalyticsLogPurchase('com.wortal.game.gems.100', '100 gems from shop sale');
+ * @param productID ID of the product the player purchased.
+ * @param details Additional details about the purchase.
+ * @throws {errorMessage} See error.message for more details.
+ * <ul>
+ * <li>INVALID_PARAM</li>
+ * </ul>
+ */
+function wortalAnalyticsLogPurchase(productID, details) {
+    window.Wortal.analytics.logPurchase(productID, details);
+}
+
+/**
+ * Logs the player's purchase of an in-app subscription.
+ * @example
+ * wortalAnalyticsLogPurchaseSubscription('com.wortal.game.seasonpass', 'Season pass from level up reward UI');
+ * @param productID ID of the subscription product the player purchased.
+ * @param details Additional details about the purchase.
+ * @throws {errorMessage} See error.message for more details.
+ * <ul>
+ * <li>INVALID_PARAM</li>
+ * </ul>
+ */
+function wortalAnalyticsLogPurchaseSubscription(productID, details) {
+    window.Wortal.analytics.logPurchaseSubscription(productID, details);
 }

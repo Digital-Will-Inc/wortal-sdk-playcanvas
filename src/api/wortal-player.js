@@ -54,7 +54,7 @@ function wortalPlayerIsFirstPlay() {
  * @param {string[]} keys Array of keys for the data to get.
  * @returns {Promise<any>} A promise that resolves with an object which contains the current key-value pairs for each
  * key specified in the input array, if they exist.
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>INVALID_PARAM</li>
@@ -83,7 +83,7 @@ function wortalPlayerGetDataAsync(keys) {
  * @returns {Promise<void>} A promise that resolves when the input values are set. NOTE: The promise resolving does not
  * necessarily mean that the input has already been persisted. Rather, it means that the data was valid and has been
  * scheduled to be saved. It also guarantees that all values that were set are now available in player.getDataAsync.
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>INVALID_PARAM</li>
@@ -105,7 +105,7 @@ function wortalPlayerSetDataAsync(data) {
  * wortalPlayerFlushDataAsync()
  *  .then(() => console.log("Data flushed."));
  * @returns {Promise<void>} A promise that resolves when changes have been persisted successfully, and rejects if the save fails.
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>INVALID_PARAM</li>
@@ -128,7 +128,7 @@ function wortalPlayerFlushDataAsync() {
  * }).then(players => console.log(players.length);
  * @param {connectedPlayerPayload} payload Options for the friends to get.
  * @returns {Promise<wortalPlayer[]>} A promise that resolves with a list of connected player objects.
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>NETWORK_FAILURE</li>
@@ -151,9 +151,8 @@ function wortalPlayerGetConnectedPlayersAsync(payload) {
  *          gameDataToValidate,
  *      )
  *  });
- * @returns {Promise<object>} A promise that resolves with an object containing the player ID and signature.
- * @see Signature
- * @throws {ErrorMessage} See error.message for details.
+ * @returns {Promise<signature>} A promise that resolves with an object containing the player ID and signature.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>INVALID_PARAM</li>
@@ -172,7 +171,7 @@ function wortalPlayerGetSignedPlayerInfoAsync() {
  * wortalPlayerGetASIDAsync()
  * .then(asid => console.log("Player ASID: " + asid));
  * @returns {Promise<string>} A unique identifier for the player. String is nullable.
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>RETHROW_FROM_PLATFORM</li>
@@ -195,7 +194,7 @@ function wortalPlayerGetASIDAsync() {
  *   });
  * @returns {Promise<signedASID>} Object with player ASID and signature.
  * @see SignedASID
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>RETHROW_FROM_PLATFORM</li>
@@ -213,7 +212,7 @@ function wortalPlayerGetSignedASIDAsync() {
  * @returns {Promise<boolean>} Whether a player can subscribe to the game bot or not. Developer can only call
  * subscribeBotAsync() after checking canSubscribeBotAsync(), and the game will only be able to show the player their
  * bot subscription dialog once per week.
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>RATE_LIMITED</li>
@@ -233,7 +232,7 @@ function wortalPlayerCanSubscribeBotAsync() {
  * .then(() => console.log("Player subscribed to bot"));
  * @returns {Promise<void>} A promise that resolves if player successfully subscribed to the game bot, or rejects if
  * request failed or player chose to not subscribe.
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>INVALID_PARAM</li>
@@ -244,41 +243,3 @@ function wortalPlayerCanSubscribeBotAsync() {
 function wortalPlayerSubscribeBotAsync() {
     return window.Wortal.player.subscribeBotAsync();
 }
-
-/**
- * @typedef wortalPlayer
- * @property {string} id Player's ID
- * @property {string} name Player's name
- * @property {string} photo URL to player's photo
- */
-
-/**
- * @typedef connectedPlayerPayload
- * @property {number | undefined} cursor
- * @property {connectedPlayerFilter | undefined} filter
- * @property {number | undefined} hoursSinceInvitation
- * @property {number | undefined} size
- */
-
-/**
- * @typedef connectedPlayerFilter
- * 'ALL' | 'INCLUDE_PLAYERS' | 'INCLUDE_NON_PLAYERS' | 'NEW_INVITATIONS_ONLY'
- */
-
-/**
- * @typedef signedASID
- * @property {string} asid The ID of the player
- * @property {string} signature
- * A signature to verify this object indeed comes from Facebook. The string is base64url encoded and signed with an
- * HMAC version of your App Secret, based on the OAuth 2.0 spec.
- *
- * You can validate it with the following 4 steps:
- *
- * - Split the signature into two parts delimited by the '.' character.
- * - Decode the first part (the encoded signature) with base64url encoding.
- * - Decode the second part (the response payload) with base64url encoding, which should be a string representation of a JSON object that has the following fields: ** algorithm - always equals to HMAC-SHA256 ** issued_at - a unix timestamp of when this response was issued. ** asid - the app-scoped user id of the player.
- * - Hash the whole response payload string using HMAC SHA-256 and your app secret and confirm that it is equal to the encoded signature.
- * - You may also wish to validate the issued_at timestamp in the response payload to ensure the request was made recently.
- *
- * Signature validation should only happen on your server. Never do it on the client side as it will compromise your app secret key.
- */

@@ -5,7 +5,7 @@
  * The contents of the object are developer-defined, and can occur from entry points on different platforms.
  * This will return null for older mobile clients, as well as when there is no data associated with the particular entry point.
  * @example
- * let data = wortalSessionGetEntryPointData();
+ * const data = wortalSessionGetEntryPointData();
  * console.log(data.property);
  * @returns {Record<string, unknown>} Data about the entry point or an empty object if none exists.
  */
@@ -17,9 +17,9 @@ function wortalSessionGetEntryPointData() {
  * Returns the entry point that the game was launched from.
  * @example
  * wortalSessionGetEntryPointAsync()
- *  .then(entryPoint => console.log(entryPoint);
+ *  .then(entryPoint => console.log(entryPoint));
  * @returns {Promise<string>} The name of the entry point from which the user started the game
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>
  * <li>RETHROW_FROM_PLATFORM</li>
@@ -48,7 +48,7 @@ function wortalSessionSetSessionData(data) {
 /**
  * Gets the locale the player is using. This is useful for localizing your game.
  * @example
- * let lang = wortalSessionGetLocale();
+ * const lang = wortalSessionGetLocale();
  * @returns {string} Locale in [BCP47](http://www.ietf.org/rfc/bcp/bcp47.txt) format.
  */
 function wortalSessionGetLocale() {
@@ -59,7 +59,7 @@ function wortalSessionGetLocale() {
  * Gets the traffic source info for the game. This is useful for tracking where players are coming from.
  * For example, if you want to track where players are coming from for a specific campaign.
  * @example
- * let source = wortalSessionGetTrafficSource();
+ * const source = wortalSessionGetTrafficSource();
  * console.log(source['r_entrypoint']);
  * console.log(source['utm_source']);
  * @returns {trafficSource} URL parameters attached to the game.
@@ -72,21 +72,10 @@ function wortalSessionGetTrafficSource() {
  * Gets the platform the game is running on. This is useful for platform specific code.
  * For example, if you want to show a different social share asset on Facebook than on Link.
  * @example
- * let platform = wortalSessionGetPlatform();
+ * const platform = wortalSessionGetPlatform();
  * console.log(platform);
  * @returns {platform} Platform the game is running on.
  */
 function wortalSessionGetPlatform() {
     return window.Wortal.session.getPlatform();
 }
-
-/**
- * @typedef trafficSource
- * @property {string | undefined} ['utm_source']
- * @property {string | undefined} ['r_entrypoint']
- */
-
-/**
- * @typedef {string} platform
- * 'wortal' | 'link' | 'viber' | 'gd' | 'facebook' | 'debug'
- */
