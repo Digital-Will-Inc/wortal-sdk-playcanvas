@@ -210,3 +210,20 @@ function wortalContextShareLinkAsync(payload) {
 function wortalContextUpdateAsync(payload) {
     return window.Wortal.context.updateAsync(payload);
 }
+
+/**
+ * This function determines whether the number of participants in the current game context is between a given minimum
+ * and maximum, inclusive. If one of the bounds is null only the other bound will be checked against. It will always
+ * return the original result for the first call made in a context in a given game play session. Subsequent calls,
+ * regardless of arguments, will return the answer to the original query until a context change occurs and the query
+ * result is reset.
+ * @example
+ * const result = wortalContextIsSizeBetween(2, 4);
+ * console.log(result.answer);
+ * @param min Minimum number of players in context.
+ * @param max Maximum number of players in context.
+ * @returns {contextSizeResponse} Object with the result of the check. Null if not supported.
+ */
+function wortalContextIsSizeBetween(min, max) {
+    return window.Wortal.context.isSizeBetween(min, max);
+}
