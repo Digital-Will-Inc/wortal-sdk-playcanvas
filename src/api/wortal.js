@@ -39,6 +39,19 @@ function wortalPerformHapticFeedbackAsync() {
     return window.Wortal.performHapticFeedbackAsync();
 }
 
+/**
+ * Gets the supported APIs for the current platform.
+ * @example
+ * const wortalGetSupportedAPIs = wortal.getSupportedAPIs();
+ * if (supportedAPIs.includes("context.shareAsync")) {
+ *    shareWithFriendsDialog.show();
+ * }
+ * @returns {string[]} Array of supported APIs.
+ */
+function wortalGetSupportedAPIs() {
+    return window.Wortal.getSupportedAPIs();
+}
+
 function _checkForBody() {
     if (document.readyState === "loading") {
         document.addEventListener('DOMContentLoaded', _addLoader);
