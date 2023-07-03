@@ -17,7 +17,7 @@
  * @param {function} afterAd Callback for after the ad is shown. Resume the game here.
  * @param {function} noFill Callback for when the ad is not filled. This can happen if the platform has no ads to show or if the
  * rate limit has been reached. If this is not provided, the afterAd callback will be used.
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
@@ -31,9 +31,11 @@ function wortalAdsShowInterstitial(placement, description, beforeAd, afterAd, no
  * must be notified of the ad and give permission to show before it can be shown.
  * @example
  * // This example shows the game flow independent of the outcome of the ad.
+ * // Ex: Player gets bonus coins for watching the ad, but the game continues regardless of the outcome.
  * wortalAdsShowRewarded('BonusCoins', pauseGame, resumeGame, skipBonus, addBonusCoins);
  *
  * // This example shows the game flow depending on the outcome of the ad.
+ * // Ex: Player dies and can revive by watching an ad, but if they skip the ad they lose the level.
  * wortalAdsShowRewarded('ReviveAndContinue', pauseAudio, resumeAudio, endGame, continueGame);
  * @param {string} description Description of the placement.
  * @param {function} beforeAd Callback for before the ad is shown. Pause the game here.
@@ -42,7 +44,7 @@ function wortalAdsShowInterstitial(placement, description, beforeAd, afterAd, no
  * @param {function} adViewed Callback for when the player has successfully watched the ad. Reward the player here.
  * @param {function} noFill Callback for when the ad is not filled. This can happen if the platform has no ads to show or if the
  * rate limit has been reached. If this is not provided, the afterAd callback will be used.
- * @throws {ErrorMessage} See error.message for details.
+ * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>INVALID_PARAM</li>
  * </ul>
@@ -50,8 +52,3 @@ function wortalAdsShowInterstitial(placement, description, beforeAd, afterAd, no
 function wortalAdsShowRewarded(description, beforeAd, afterAd, adDismissed, adViewed, noFill) {
     window.Wortal.ads.showRewarded(description, beforeAd, afterAd, adDismissed, adViewed, noFill);
 }
-
-/**
- * @typedef {string} placement
- * 'next' | 'pause' | 'browse' | 'start'
- */

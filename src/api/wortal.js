@@ -1,5 +1,5 @@
 const wortal = document.createElement('script');
-wortal.src = 'https://storage.googleapis.com/html5gameportal.com/wortal-sdk/wortal-core-1.4.0.js';
+wortal.src = 'https://storage.googleapis.com/html5gameportal.com/wortal-sdk/wortal-core-1.5.0.js';
 wortal.type = 'text/javascript';
 wortal.onload = () => checkForBody();
 document.head.appendChild(wortal);
