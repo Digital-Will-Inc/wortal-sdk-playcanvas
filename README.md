@@ -33,9 +33,11 @@ must be notified of the ad and give permission to show before it can be shown.
 
 ```javascript
 // This example shows the game flow independent of the outcome of the ad.
+// Ex: Player gets bonus coins for watching the ad, but the game continues regardless of the outcome.
 wortalAdsShowRewarded('BonusCoins', pauseGame, resumeGame, skipBonus, addBonusCoins);
 
 // This example shows the game flow depending on the outcome of the ad.
+// Ex: Player dies and can revive by watching an ad, but if they skip the ad they lose the level.
 wortalAdsShowRewarded('ReviveAndContinue', pauseAudio, resumeAudio, endGame, continueGame);
 ```
 
@@ -70,20 +72,20 @@ and send messages to each other.
 
 ```javascript
 // Invite a friend to play the game.
-wortalContextChooseAsync({
+wortalContextInviteAsync({
     image: 'data:base64Image',
     text: 'Invite text',
-    caption: 'Play',
+    cta: 'Play',
     data: { exampleData: 'yourData' },
-})
+}).then(() => console.log("Invite sent!"));
 
 // Share your game activity with friends.
 wortalContextShareAsync({
     image: 'data:base64image',
     text: 'Share text',
-    caption: 'Play',
+    cta: 'Play',
     data: { exampleData: 'yourData' },
-}).then(result => console.log(result); // Contains shareCount with number of friends the share was sent to.
+}).then(result => console.log(result));
 ```
 
 ### In-App Purchases
@@ -114,7 +116,7 @@ you can track player's scores and compare them to other players.
 ```javascript
 // Get the top 10 entries on the global leaderboard.
 wortalLeaderboardGetEntriesAsync('global', 10)
-    .then(entries => console.log(entries);
+    .then(entries => console.log(entries));
 
 // Add the player's score to the leaderboard.
 wortalLeaderboardSendEntryAsync('global', 100);
@@ -135,7 +137,7 @@ wortalPlayerGetConnectedPlayersAsync({
     filter: 'ALL',
     size: 20,
     hoursSinceInvitation: 4,
-}).then(players => console.log(players.length);
+}).then(players => console.log(players.length));
 ```
 
 ### Session
@@ -147,5 +149,11 @@ Details about the current session can be accessed in the Session API.
 ```javascript
 // Get the entry point of where the game started from.
 wortalSessionGetEntryPointAsync()
- .then(entryPoint => console.log(entryPoint);
+ .then(entryPoint => console.log(entryPoint));
+
+// Get the entry point data from a social invite or share.
+// This is useful for tracking where players are coming from or
+// providing a reward for players who were invited to play.
+const data = wortalSessionGetEntryPointData();
+console.log(data);
 ```
