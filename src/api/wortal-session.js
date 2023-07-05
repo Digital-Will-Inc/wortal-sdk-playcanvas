@@ -18,7 +18,7 @@ function wortalSessionGetEntryPointData() {
  * @example
  * wortalSessionGetEntryPointAsync()
  *  .then(entryPoint => console.log(entryPoint));
- * @returns {Promise<string>} The name of the entry point from which the user started the game
+ * @returns {Promise<string>} Promise resolving with the name of the entry point from which the user started the game.
  * @throws {errorMessage} See error.message for details.
  * <ul>
  * <li>NOT_SUPPORTED</li>

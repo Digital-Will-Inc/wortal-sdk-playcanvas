@@ -122,6 +122,32 @@ wortalLeaderboardGetEntriesAsync('global', 10)
 wortalLeaderboardSendEntryAsync('global', 100);
 ```
 
+### Notifications
+
+[API Reference](https://sdk.html5gameportal.com/api/notifications/)
+
+The Notifications API is used to send notifications to the player. These can be used to notify the player
+of an event in the game or to remind them to come back and play.
+
+```typescript
+// Schedule a notification to send to the player.
+wortalNotificationsScheduleAsync({
+    title: "Your energy is full!",
+    body: "Come back and play again.",
+    mediaURL: "https://example.com/image.png",
+    label: "resources-full",
+    scheduleInterval: 300 // 5 minutes
+}).then((result) => {
+    console.log(result.id);
+});
+
+// Cancel a scheduled notification.
+wortalNotificationsCancelAsync('notification-id-123')
+    .then((result) => {
+        console.log(result);
+    });
+```
+
 ### Player
 
 [API Reference](https://sdk.html5gameportal.com/api/player/)
