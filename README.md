@@ -8,6 +8,40 @@
 
 ![Loading Type Settings](/docs/img/playcanvas-loading-type.png)
 
+### Initialization
+
+#### Auto initialization
+
+By default, the SDK will initialize itself automatically. This is the recommended way to initialize the SDK.
+
+The SDK will be ready for use after `wortalIsInitialized` returns `true`. It will also fire the `wortal-sdk-initialized` window event at this time.
+
+```javascript
+if (wortalIsInitialized) {
+    // SDK is ready to use.
+}
+
+window.addEventListener('wortal-sdk-initialized', () => {
+    // SDK is ready to use.
+});
+```
+
+#### Manual initialization
+
+Alternatively, you can initialize the SDK manually. This is useful if the game has large asset bundles that take some
+time to download. Follow these steps to enable manual initialization:
+
+1. Modify the `wortal.js` file to set the `data-manual-init="true"` attribute on the SDK script tag:
+
+`wortal.setAttribute('data-manual-init', 'true');`
+
+2. Comment out the `wortalLoader` script in `wortal.js`.
+
+3. Call `wortal.initializeAsync()` as early as possible in your game's initialization code, then `wortal.startGameAsync()`
+   when your game has finished loading and is ready for play.
+
+4. Report the loading progress of the game in your initialization code. The game will not start until the loading progress reaches 100%.
+
 ## How to Use
 
 ### Ads
@@ -122,6 +156,32 @@ wortalLeaderboardGetEntriesAsync('global', 10)
 wortalLeaderboardSendEntryAsync('global', 100);
 ```
 
+### Notifications
+
+[API Reference](https://sdk.html5gameportal.com/api/notifications/)
+
+The Notifications API is used to send notifications to the player. These can be used to notify the player
+of an event in the game or to remind them to come back and play.
+
+```typescript
+// Schedule a notification to send to the player.
+wortalNotificationsScheduleAsync({
+    title: "Your energy is full!",
+    body: "Come back and play again.",
+    mediaURL: "https://example.com/image.png",
+    label: "resources-full",
+    scheduleInterval: 300 // 5 minutes
+}).then((result) => {
+    console.log(result.id);
+});
+
+// Cancel a scheduled notification.
+wortalNotificationsCancelAsync('notification-id-123')
+    .then((result) => {
+        console.log(result);
+    });
+```
+
 ### Player
 
 [API Reference](https://sdk.html5gameportal.com/api/player/)
@@ -156,4 +216,30 @@ wortalSessionGetEntryPointAsync()
 // providing a reward for players who were invited to play.
 const data = wortalSessionGetEntryPointData();
 console.log(data);
+```
+
+### Tournament
+
+[API Reference](https://sdk.html5gameportal.com/api/tournament/)
+
+The Tournament API is used to create and manage tournaments for your game.
+
+```typescript
+// Create a tournament.
+const payload = {
+    initialScore: 100,
+    config: {
+        title: "Level 1 Tournament",
+    },
+    data: {
+        level: 1,
+    },
+};
+
+wortalTournamentCreateAsync(payload)
+    .then(tournament => console.log(tournament.payload["level"]));
+
+// Post a score to a tournament.
+wortalTournamentPostScoreAsync(200)
+    .then(() => console.log("Score posted!"));
 ```

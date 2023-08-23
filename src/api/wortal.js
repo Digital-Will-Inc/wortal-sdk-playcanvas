@@ -1,9 +1,11 @@
 const wortal = document.createElement('script');
-wortal.src = 'https://storage.googleapis.com/html5gameportal.com/wortal-sdk/wortal-core-1.5.0.js';
+wortal.src = 'https://storage.googleapis.com/html5gameportal.com/wortal-sdk/wortal-core-1.6.js';
 wortal.type = 'text/javascript';
+wortal.setAttribute('data-manual-init', 'false'); // Change this to true to enable manual initialization.
 wortal.onload = () => _checkForBody();
 document.head.appendChild(wortal);
 
+// If using manual initialization, comment out this script and report the loading progress manually.
 const wortalLoader = document.createElement('script');
 wortalLoader.type = 'text/javascript';
 wortalLoader.text =
@@ -14,6 +16,81 @@ wortalLoader.text =
             window.Wortal.setLoadingProgress(value * 100);
         }
     }`;
+
+/**
+ * Returns true if the SDK Core has been initialized.
+ */
+function wortalIsInitialized() {
+    return window.Wortal.isInitialized;
+}
+
+/**
+ * Initializes the SDK. This should be called before any other SDK functions. It is recommended to call this
+ * as soon as the script has been loaded to shorten the initialization time.
+ *
+ * NOTE: This is only available if the manual initialization option is set to true. Otherwise, the SDK will initialize automatically.
+ *
+ * PLATFORM NOTE: Only supported on Viber, Link and Facebook.
+ * @example
+ * wortalInitializeAsync().then(() => {
+ *    // SDK is ready to use, wait for game to finish loading.
+ *    wortalSetLoadingProgress(100);
+ *    wortalStartGameAsync();
+ * });
+ * @returns {Promise<void>} Promise that resolves when the SDK initialized successfully.
+ * @throws {ErrorMessage} See error.message for details.
+ * <ul>
+ * <li>INITIALIZATION_ERROR</li>
+ * <li>NOT_SUPPORTED</li>
+ * </ul>
+ */
+async function wortalInitializeAsync() {
+    return window.Wortal.initializeAsync();
+}
+
+/**
+ * This indicates that the game has finished initial loading and is ready to start. Context information will be
+ * up-to-date when the returned promise resolves. The loading screen will be removed after this is called along with
+ * the following conditions:
+ * <ul>
+ * <li>initializeAsync has been called and resolved</li>
+ * <li>setLoadingProgress has been called with a value of 100</li>
+ * </ul>
+ *
+ * NOTE: This is only available if the manual initialization option is set to true. Otherwise, the game will start automatically.
+ *
+ * PLATFORM NOTE: Only supported on Viber, Link and Facebook.
+ * @example
+ * wortalStartGameAsync().then(() => {
+ *    // Game is rendered to player.
+ * });
+ * @returns {Promise<void>} Promise that resolves when the game has started successfully.
+ * @throws {ErrorMessage} See error.message for details.
+ * <ul>
+ * <li>INITIALIZATION_ERROR</li>
+ * <li>NOT_SUPPORTED</li>
+ * </ul>
+ */
+async function wortalStartGameAsync() {
+    return window.Wortal.startGameAsync();
+}
+
+/**
+ * Sets the loading progress value for the game. This is required for the game to start. Failure to call this with 100
+ * once the game is fully loaded will prevent the game from starting.
+ * @example
+ * onGameLoadProgress(percent) {
+ *     wortalSetLoadingProgress(percent);
+ * }
+ *
+ * onGameLoaded() {
+ *     wortalSetLoadingProgress(100);
+ * }
+ * @param value Percentage of loading complete. Range is 0 to 100.
+ */
+function wortalSetLoadingProgress(value) {
+    window.Wortal.setLoadingProgress(value);
+}
 
 /**
  * Sets a callback which will be invoked when the app is brought to the background.
