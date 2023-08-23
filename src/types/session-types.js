@@ -9,3 +9,18 @@
  * - 'facebook'
  * - 'debug'
  */
+
+/**
+ * @typedef {string} device
+ * Device the game is currently being played on.
+ * - 'IOS'
+ * - 'ANDROID'
+ * - 'DESKTOP'
+ */
+
+/**
+ * @typedef {string} orientation
+ * Orientation of the device the game is currently being played on.
+ * - 'PORTRAIT'
+ * - 'LANDSCAPE'
+ */
