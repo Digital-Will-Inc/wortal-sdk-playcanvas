@@ -10,43 +10,16 @@
 
 ### Initialization
 
-#### Auto initialization
-
-By default, the SDK will initialize itself automatically. This is the recommended way to initialize the SDK.
-
-The SDK will be ready for use after `wortalIsInitialized` returns `true`. It will also fire the `wortal-sdk-initialized` window event at this time.
-
-```javascript
-if (wortalIsInitialized) {
-    // SDK is ready to use.
-}
-
-window.addEventListener('wortal-sdk-initialized', () => {
-    // SDK is ready to use.
-});
-```
-
-#### Manual initialization
-
-Alternatively, you can initialize the SDK manually. This is useful if the game has large asset bundles that take some
-time to download. Follow these steps to enable manual initialization:
-
-1. Modify the `wortal.js` file to set the `data-manual-init="true"` attribute on the SDK script tag:
-
-`wortal.setAttribute('data-manual-init', 'true');`
-
-2. Comment out the `wortalLoader` script in `wortal.js`.
-
-3. Call `wortal.initializeAsync()` as early as possible in your game's initialization code, then `wortal.startGameAsync()`
+1. Call `wortalinitializeAsync()` as early as possible in your game's initialization code, then `wortalstartGameAsync()`
    when your game has finished loading and is ready for play.
 
-4. Report the loading progress of the game in your initialization code. The game will not start until the loading progress reaches 100%.
+2. Report the loading progress of the game in your initialization code. The game will not start until the loading progress reaches 100%.
 
 ## How to Use
 
 ### Ads
 
-[API Reference](https://sdk.html5gameportal.com/api/ads/)
+[API Reference](https://docs.games-api.ai/api/ads/)
 
 Interstitial ads can be shown at various points in the game such as a level end, restart or a timed
 interval in games with longer levels.
@@ -79,7 +52,7 @@ wortalAdsShowRewarded('ReviveAndContinue', pauseAudio, resumeAudio, endGame, con
 
 ### Analytics
 
-[API Reference](https://sdk.html5gameportal.com/api/analytics/)
+[API Reference](https://docs.games-api.ai/api/analytics/)
 
 The Analytics API can be used to track game events that can help better understand how players are interacting with
 the game. This data will be available for viewing in the Wortal dashboard.
@@ -97,9 +70,26 @@ wortalAnalyticsLogLevelEnd('Level 3', '100', true);
 wortalAnalyticsLogGameChoice('Character', 'Blue');
 ```
 
+### Achievements
+
+[API Reference](https://docs.games-api.ai/api/achievements/)
+
+The Achievements API is used to track player progress in the game. Achievements can be used to reward players for
+completing certain tasks or reaching certain milestones.
+
+```javascript
+// Unlock an achievement.
+wortalAchievementsUnlockAchievementAsync('achievementID')
+    .then(() => console.log("Achievement unlocked!"));
+
+// Get the player's achievements progress.
+wortalAchievementsGetAchievementsAsync()
+    .then(achievements => console.log(achievements));
+```
+
 ### Context
 
-[API Reference](https://sdk.html5gameportal.com/api/context/)
+[API Reference](https://docs.games-api.ai/api/context/)
 
 The Context API is used to connect players and allow them to interact in the game session, share their content
 and send messages to each other.
@@ -124,7 +114,7 @@ wortalContextShareAsync({
 
 ### In-App Purchases
 
-[API Reference](https://sdk.html5gameportal.com/api/iap/)
+[API Reference](https://docs.games-api.ai/api/iap/)
 
 The In-App Purchases (IAP) API is used to provide an interface for in-game transactions on the platforms.
 This process will differ based on what platform the game is being played on, but the API remains the same.
@@ -142,7 +132,7 @@ wortalIAPMakePurchaseAsync({
 
 ### Leaderboards
 
-[API Reference](https://sdk.html5gameportal.com/api/leaderboard/)
+[API Reference](https://docs.games-api.ai/api/leaderboard/)
 
 The Leaderboard API gives the game access to the platform's leaderboard functionality. This is where
 you can track player's scores and compare them to other players.
@@ -158,7 +148,7 @@ wortalLeaderboardSendEntryAsync('global', 100);
 
 ### Notifications
 
-[API Reference](https://sdk.html5gameportal.com/api/notifications/)
+[API Reference](https://docs.games-api.ai/api/notifications/)
 
 The Notifications API is used to send notifications to the player. These can be used to notify the player
 of an event in the game or to remind them to come back and play.
@@ -184,7 +174,7 @@ wortalNotificationsCancelAsync('notification-id-123')
 
 ### Player
 
-[API Reference](https://sdk.html5gameportal.com/api/player/)
+[API Reference](https://docs.games-api.ai/api/player/)
 
 You can find details about the current player via the Player API.
 
@@ -202,7 +192,7 @@ wortalPlayerGetConnectedPlayersAsync({
 
 ### Session
 
-[API Reference](https://sdk.html5gameportal.com/api/session/)
+[API Reference](https://docs.games-api.ai/api/session/)
 
 Details about the current session can be accessed in the Session API.
 
@@ -218,9 +208,25 @@ const data = wortalSessionGetEntryPointData();
 console.log(data);
 ```
 
+### Stats
+
+[API Reference](https://docs.games-api.ai/api/stats/)
+
+The Stats API is used to track player statistics in the game.
+
+```javascript
+// Get the player's high score for the level.
+wortalStatsGetStatsAsync("level1")
+    .then(stats => console.log(stats.value));
+
+// Set the player's high score for the game.
+wortalStatsPostStatsAsync("level1", 1000)
+    .then(() => console.log("High score set!"));
+```
+
 ### Tournament
 
-[API Reference](https://sdk.html5gameportal.com/api/tournament/)
+[API Reference](https://docs.games-api.ai/api/tournament/)
 
 The Tournament API is used to create and manage tournaments for your game.
 
