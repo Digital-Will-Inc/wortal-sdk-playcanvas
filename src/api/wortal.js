@@ -1,21 +1,7 @@
 const wortal = document.createElement('script');
-wortal.src = 'https://storage.googleapis.com/html5gameportal.com/wortal-sdk/wortal-core-1.6.js';
+wortal.src = 'https://storage.googleapis.com/cdn-wortal-ai/v2/wortal-core.js';
 wortal.type = 'text/javascript';
-wortal.setAttribute('data-manual-init', 'false'); // Change this to true to enable manual initialization.
-wortal.onload = () => _checkForBody();
 document.head.appendChild(wortal);
-
-// If using manual initialization, comment out this script and report the loading progress manually.
-const wortalLoader = document.createElement('script');
-wortalLoader.type = 'text/javascript';
-wortalLoader.text =
-    `var app = pc.Application.getApplication();
-    app.on('preload:progress', setProgress);
-    function setProgress(value) {
-        if (window.Wortal) {
-            window.Wortal.setLoadingProgress(value * 100);
-        }
-    }`;
 
 /**
  * Returns true if the SDK Core has been initialized.
@@ -127,16 +113,4 @@ function wortalPerformHapticFeedbackAsync() {
  */
 function wortalGetSupportedAPIs() {
     return window.Wortal.getSupportedAPIs();
-}
-
-function _checkForBody() {
-    if (document.readyState === "loading") {
-        document.addEventListener('DOMContentLoaded', _addLoader);
-    } else {
-        _addLoader();
-    }
-}
-
-function _addLoader() {
-    document.body.appendChild(wortalLoader);
 }
