@@ -2,7 +2,7 @@
 /**
  * Gets a player's achievements. This method returns all achievements, regardless of whether they are unlocked or not.
  * @example
- * wortal.achievements.getAchievementsAsync()
+ * wortalAchievementsGetAchievementsAsync()
  *   .then((achievements) => {
  *      foreach (const achievement of achievements) {
  *          if (achievement.isUnlocked) {
@@ -16,7 +16,7 @@
  * <li>NOT_SUPPORTED</li>
  * </ul>
  */
-function getAchievementsAsync() {
+function wortalAchievementsGetAchievementsAsync() {
     return window.Wortal.achievements.getAchievementsAsync();
 }
 
@@ -24,7 +24,7 @@ function getAchievementsAsync() {
  * Unlocks an achievement for the player. This method will only unlock the achievement if it has not already been unlocked.
  * @param achievementName The name of the achievement to unlock.
  * @example
- * wortal.achievements.unlockAchievementAsync("first_win")
+ * wortalAchievementsUnlockAchievementAsync("first_win")
  *  .then((unlocked) => {
  *    if (unlocked) {
  *      console.log("Achievement unlocked");
@@ -40,6 +40,6 @@ function getAchievementsAsync() {
  * <li>ACHIEVEMENT_NOT_FOUND</li>
  * </ul>
  */
-function unlockAchievementAsync(achievementName) {
+function wortalAchievementsUnlockAchievementAsync(achievementName) {
     return window.Wortal.achievements.unlockAchievementAsync(achievementName);
 }
