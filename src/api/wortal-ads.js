@@ -66,3 +66,13 @@ function wortalAdsShowInterstitial(placement, description, beforeAd, afterAd, no
 function wortalAdsShowRewarded(description, beforeAd, afterAd, adDismissed, adViewed, noFill) {
     window.Wortal.ads.showRewarded(description, beforeAd, afterAd, adDismissed, adViewed, noFill);
 }
+
+/**
+ * Shows a banner ad. These are small ads that are shown at the top or bottom of the screen. They are typically used
+ * on menus or other non-gameplay screens. They can be shown or hidden at any time.
+ * @param shouldShow Whether the banner should be shown or hidden. Default is show.
+ * @param position Where the banner should be shown. Top or bottom of the screen. Default is the bottom.
+ */
+function wortalAdsShowBanner(shouldShow, position) {
+    window.Wortal.ads.showBanner(shouldShow, position);
+}
