@@ -9,7 +9,8 @@
  * }
  * @returns {boolean} True if ads are blocked for the current session. False if ads are not blocked.
  */
-function wortalAdsIsAdBlocked() {
+function wortalAdsIsAdBlocked()
+{
     return window.Wortal.ads.isAdBlocked();
 }
 
@@ -36,7 +37,8 @@ function wortalAdsIsAdBlocked() {
  * <li>INVALID_PARAM</li>
  * </ul>
  */
-function wortalAdsShowInterstitial(placement, description, beforeAd, afterAd, noFill) {
+function wortalAdsShowInterstitial(placement, description, beforeAd, afterAd, noFill)
+{
     window.Wortal.ads.showInterstitial(placement, description, beforeAd, afterAd, noFill);
 }
 
@@ -63,7 +65,8 @@ function wortalAdsShowInterstitial(placement, description, beforeAd, afterAd, no
  * <li>INVALID_PARAM</li>
  * </ul>
  */
-function wortalAdsShowRewarded(description, beforeAd, afterAd, adDismissed, adViewed, noFill) {
+function wortalAdsShowRewarded(description, beforeAd, afterAd, adDismissed, adViewed, noFill)
+{
     window.Wortal.ads.showRewarded(description, beforeAd, afterAd, adDismissed, adViewed, noFill);
 }
 
@@ -73,6 +76,20 @@ function wortalAdsShowRewarded(description, beforeAd, afterAd, adDismissed, adVi
  * @param shouldShow Whether the banner should be shown or hidden. Default is show.
  * @param position Where the banner should be shown. Top or bottom of the screen. Default is the bottom.
  */
-function wortalAdsShowBanner(shouldShow, position) {
+function wortalAdsShowBanner(shouldShow, position)
+{
     window.Wortal.ads.showBanner(shouldShow, position);
+}
+
+/**
+ * Returns whether ads are enabled for the current session.
+ * @example
+ * if (wortalAdsIsEnabled()) {
+ *    // Do something here
+ * }
+ * @returns {boolean} True if ads are enabled for the current session.
+ */
+function wortalAdsIsEnabled()
+{
+    return window.Wortal.ads.isEnabled();
 }
